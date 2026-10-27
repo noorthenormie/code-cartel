@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.venv/
+venv/
+
+# Environment files (never commit credentials)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime data / caches
+backend/data/
+backend/.cache/
+*.log
+
+# Build output
+dist/
+dist-ssr/
+build/
+frontend/dist/
+.vercel/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local archives and raw datasets (not part of the application)
+new_start_xenothon/
+storeing models/
+datasets_13339.csv
