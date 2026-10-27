@@ -84,6 +84,13 @@ async def pipeline(duration: int = 0, with_api: bool = False):
 
     await run_pipeline(duration)
 
+    # Keep the API available after a session is stopped from the UI so the
+    # operator can start another recording without relaunching the backend.
+    if with_api and duration == 0:
+        print("[MAIN] Recording stopped; API still running on :8000 (Ctrl+C to exit)")
+        while True:
+            await asyncio.sleep(3600)
+
 
 async def run_pipeline(duration: int = 0):
     """Core pipeline loop — can be called from CLI or API."""
@@ -252,6 +259,15 @@ def stop_pipeline():
 
 
 def main():
+    # When launched with `python -m app.main`, this file runs as `__main__`.
+    # The API thread imports `app.main`, which would otherwise create a second
+    # module instance with its own pipeline/WebSocket globals. Alias this module
+    # so `/api/status`, `/api/start`, `/api/stop`, and live broadcasts all share
+    # the same state as the running pipeline.
+    import sys
+    if __package__ == "app":
+        sys.modules.setdefault("app.main", sys.modules[__name__])
+
     parser = argparse.ArgumentParser(description="Surgical Black Box Pipeline")
     parser.add_argument("--duration", type=int, default=0, help="Duration in seconds (0=indefinite)")
     parser.add_argument("--with-api", action="store_true", help="Also start the API server")
